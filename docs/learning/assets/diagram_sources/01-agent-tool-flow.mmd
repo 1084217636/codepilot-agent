@@ -1,0 +1,12 @@
+flowchart TB
+  A[POST /api/chat] --> B[chat.py::chat]
+  B --> C[graph.py::build_agent_graph]
+  C --> D[compiled graph.invoke]
+  D --> E[nodes.py::agent]
+  E --> F[OpenAI-compatible LLM]
+  F --> G[AIMessage.tool_calls?]
+  G -->|yes| H[ToolNode]
+  H --> I[read_file.py::read_file]
+  I --> J[ToolMessage]
+  J --> E
+  G -->|no| K[ChatResponse final answer]
