@@ -12,6 +12,8 @@
 
 V1 只返回普通 JSON，不使用 SSE。它要证明的是最小主链：HTTP 请求变成 LangGraph State，模型可以选择调用 Tool，Tool 结果再进入模型，最后返回答案。
 
+运行时先按 [00-how-to-run.md](00-how-to-run.md) 操作。`CODEPILOT_DEBUG=true` 时，终端会显示 `[CodePilot][01]` 到 `[15]`，每一个编号都对应本章的调用步骤。
+
 ## 为什么需要这条链
 
 直接调用一次 LLM 只能回答模型已有知识。Coding Agent 必须能够在需要时读取外部文件，因此要有一个循环：模型先决定要不要调用工具，程序执行工具，模型看见结果后继续回答。
@@ -31,6 +33,8 @@ app/api/chat.py::chat
 ```
 
 `chat()` 的输入是 `ChatRequest.message`，输出是 `ChatResponse.answer`。它每次请求创建一张很小的图，调用同步 `graph.invoke()`，读取最后一个 AIMessage 的内容返回 JSON。
+
+观察时，`[01]` 和 `[02]` 属于 HTTP 层，`[03]` 进入 LangGraph，`[04]` 到 `[07]` 属于 agent Node 与路由。出现 Tool 时，`[08]` 和 `[09]` 是项目 Python Tool 的真实文件读取，`[10]` 是 ToolNode 已创建 ToolMessage 的可见证据，`[12]` 是第二次 LLM 调用。
 
 没有 Tool Call 时，图走：`START → agent → END`。这就是本轮先证明的普通 Chat 路径：HTTP → FastAPI → LLM → Final Answer。
 

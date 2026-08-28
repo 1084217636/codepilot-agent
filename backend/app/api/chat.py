@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 
 from app.agent.graph import build_agent_graph
 from app.agent.model import build_chat_model
+from app.debug import debug_log
 from app.workspace.manager import get_workspace_root
 
 router = APIRouter(prefix="/api", tags=["chat"])
@@ -32,9 +33,18 @@ def chat(request: ChatRequest, model: Any = Depends(get_chat_model)) -> ChatResp
     """Invoke the compiled graph and return only its final AIMessage as JSON."""
 
     try:
+        debug_log(1, "HTTP request received", endpoint="POST /api/chat")
+        human = HumanMessage(content=request.message)
+        debug_log(2, "Create HumanMessage", message_type="HumanMessage")
         graph = build_agent_graph(model, get_workspace_root())
-        result = graph.invoke({"messages": [HumanMessage(content=request.message)]})
+        debug_log(3, "Enter LangGraph")
+        result = graph.invoke({"messages": [human]})
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     final = result["messages"][-1]
+    if any(message.type == "tool" for message in result["messages"]):
+        debug_log(14, "LangGraph finished")
+        debug_log(15, "Return HTTP response")
+    else:
+        debug_log(8, "LangGraph finished -> return HTTP response")
     return ChatResponse(answer=str(final.content))

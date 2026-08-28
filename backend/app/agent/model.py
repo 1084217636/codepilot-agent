@@ -10,12 +10,12 @@ from langchain_openai import ChatOpenAI
 def build_chat_model() -> ChatOpenAI:
     """Create the configured OpenAI-compatible chat model for a real local run."""
 
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    api_key = os.getenv("MODEL_API_KEY", "").strip()
     if not api_key:
-        raise ValueError("OPENAI_API_KEY is required; copy .env.example and configure a compatible provider")
+        raise ValueError("MODEL_API_KEY is required; copy .env.example and configure a compatible provider")
     return ChatOpenAI(
-        model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+        model=os.getenv("MODEL_NAME", "gpt-4o-mini"),
         api_key=api_key,
-        base_url=os.getenv("OPENAI_BASE_URL") or None,
+        base_url=os.getenv("MODEL_BASE_URL") or None,
         temperature=0,
     )

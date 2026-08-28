@@ -23,3 +23,10 @@ def test_post_chat_returns_final_answer(tmp_path, monkeypatch) -> None:
 
     assert response.status_code == 200
     assert response.json() == {"answer": "Hello from the minimal agent."}
+
+
+def test_health_reports_service_ready() -> None:
+    response = TestClient(app).get("/health")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}

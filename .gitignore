@@ -3,7 +3,6 @@ __pycache__/
 .venv/
 .env
 artifacts/
-workspace/
 .pytest_cache/
 .mypy_cache/
 node_modules/
