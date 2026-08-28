@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+artifacts/
+workspace/
+.pytest_cache/
+.mypy_cache/
+node_modules/
+dist/
+build/
