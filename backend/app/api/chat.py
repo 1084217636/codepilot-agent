@@ -6,6 +6,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from langchain_core.messages import HumanMessage
+from openai import APIError
 from pydantic import BaseModel, Field
 
 from app.agent.graph import build_agent_graph
@@ -25,7 +26,12 @@ class ChatResponse(BaseModel):
 
 
 def get_chat_model() -> Any:
-    return build_chat_model()
+    """Build the request model and turn local configuration mistakes into HTTP 400."""
+
+    try:
+        return build_chat_model()
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @router.post("/chat", response_model=ChatResponse)
@@ -39,8 +45,11 @@ def chat(request: ChatRequest, model: Any = Depends(get_chat_model)) -> ChatResp
         graph = build_agent_graph(model, get_workspace_root())
         debug_log(3, "Enter LangGraph")
         result = graph.invoke({"messages": [human]})
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except APIError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="Model provider request failed. Check MODEL_API_KEY, MODEL_BASE_URL, and MODEL_NAME.",
+        ) from exc
     final = result["messages"][-1]
     if any(message.type == "tool" for message in result["messages"]):
         debug_log(14, "LangGraph finished")

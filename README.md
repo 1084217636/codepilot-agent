@@ -24,9 +24,11 @@ V1.2 已实现 `GET /health`、普通 JSON Chat、显式 LangGraph StateGraph、
 ```bash
 uv sync --all-groups
 cp .env.example .env
-# 填写 OpenAI-compatible provider configuration and CODEPILOT_DEBUG=true
+# 必须把 MODEL_API_KEY=replace-me 换成自己的 OpenAI-compatible provider 配置
 uv run uvicorn app.main:app --app-dir backend --reload --env-file .env
 ```
+
+`.env.example` 中的 `replace-me` 只是防止把密钥提交到 Git 的占位值，不能调用模型。若 `/health` 正常而 `/api/chat` 返回 400，请先检查 `.env` 的 `MODEL_API_KEY`、`MODEL_BASE_URL` 和 `MODEL_NAME`。
 
 First call `GET http://127.0.0.1:8000/health`, then call `POST /api/chat` with `{ "message": "hello" }`.
 

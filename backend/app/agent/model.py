@@ -13,6 +13,8 @@ def build_chat_model() -> ChatOpenAI:
     api_key = os.getenv("MODEL_API_KEY", "").strip()
     if not api_key:
         raise ValueError("MODEL_API_KEY is required; copy .env.example and configure a compatible provider")
+    if api_key == "replace-me":
+        raise ValueError("MODEL_API_KEY still has the example value; replace it with a real provider API key")
     return ChatOpenAI(
         model=os.getenv("MODEL_NAME", "gpt-4o-mini"),
         api_key=api_key,
