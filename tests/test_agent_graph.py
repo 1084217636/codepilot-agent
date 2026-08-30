@@ -3,6 +3,7 @@ from pathlib import Path
 from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 
 from app.agent.graph import build_agent_graph
+from app.debug import begin_trace
 
 
 class ScriptedToolCallingModel:
@@ -36,6 +37,7 @@ class ScriptedToolCallingModel:
 
 def test_agent_graph_runs_human_tool_ai_message_sequence(tmp_path: Path, monkeypatch, capsys) -> None:
     monkeypatch.setenv("CODEPILOT_DEBUG", "true")
+    begin_trace("test-tool-loop")
     (tmp_path / "answer.txt").write_text("42", encoding="utf-8")
     model = ScriptedToolCallingModel()
     graph = build_agent_graph(model, tmp_path)
@@ -48,7 +50,10 @@ def test_agent_graph_runs_human_tool_ai_message_sequence(tmp_path: Path, monkeyp
     assert result["messages"][2].content == "42"
     assert result["messages"][-1].content == "The file says: 42."
     logs = capsys.readouterr().out
-    assert "[CodePilot][06] LLM returned tool_call" in logs
-    assert "[CodePilot][08] Execute read_file" in logs
-    assert "[CodePilot][10] ToolNode created ToolMessage" in logs
-    assert "[CodePilot][13] LLM returned final answer" in logs
+    assert "request_id='test-tool-loop'" in logs
+    assert "model_call=1" in logs
+    assert "model_call=2" in logs
+    assert "LLM returned tool_call" in logs
+    assert "Execute project Python tool: read_file" in logs
+    assert "ToolNode yielded ToolMessage" in logs
+    assert "LLM returned final answer" in logs

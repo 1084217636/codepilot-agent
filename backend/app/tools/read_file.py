@@ -23,10 +23,10 @@ def build_read_file_tool(workspace_root: Path) -> BaseTool:
             path: Relative path below the workspace root.
         """
 
-        debug_log(8, "Execute read_file", path=path)
+        debug_log(10, "Execute project Python tool: read_file", path=path)
         source = resolve_workspace_file(workspace_root, path)
         content = source.read_text(encoding="utf-8", errors="replace")[:MAX_READ_CHARS]
-        debug_log(9, "read_file success", path=path, chars=len(content))
+        debug_log(11, "read_file success", path=path, chars=len(content))
         return content
 
     return read_file

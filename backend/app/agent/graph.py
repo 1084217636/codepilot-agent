@@ -10,6 +10,7 @@ from langgraph.prebuilt import ToolNode
 
 from app.agent.nodes import make_agent_node, route_after_agent
 from app.agent.state import AgentState
+from app.debug import debug_log
 from app.tools.read_file import build_read_file_tool
 
 
@@ -18,6 +19,14 @@ def build_agent_graph(model: Any, workspace_root: Path):
 
     read_file = build_read_file_tool(workspace_root)
     bound_model = model.bind_tools([read_file])
+    debug_log(
+        3,
+        "Bind tool schema to LLM and build StateGraph",
+        nodes="agent, tools",
+        tool_name=read_file.name,
+        tool_args="path: str",
+        workspace_root=str(workspace_root),
+    )
 
     builder = StateGraph(AgentState)
     builder.add_node("agent", make_agent_node(bound_model))
@@ -25,4 +34,6 @@ def build_agent_graph(model: Any, workspace_root: Path):
     builder.add_edge(START, "agent")
     builder.add_conditional_edges("agent", route_after_agent, {"tools": "tools", "end": END})
     builder.add_edge("tools", "agent")
-    return builder.compile()
+    graph = builder.compile()
+    debug_log(4, "Compile graph", edges="START->agent; agent->tools|END; tools->agent")
+    return graph

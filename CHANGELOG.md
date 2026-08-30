@@ -6,7 +6,7 @@
 
 - `read_file` Tool、`model.bind_tools`、`ToolNode`、条件 Edge。
 - `workspace/demo/README.md` 与 `hello.py` 示例。
-- `CODEPILOT_DEBUG` 教学日志，显示 HumanMessage、AIMessage、ToolMessage 相关步骤。
+- `CODEPILOT_DEBUG` 教学日志：每次请求记录 request ID、StateGraph 节点跳转、消息类型、实际 LLM 调用次数、工具参数摘要和总耗时；不记录密钥、完整 Prompt 或完整文件内容。
 
 系统结构：
 

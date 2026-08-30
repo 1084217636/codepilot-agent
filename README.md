@@ -17,7 +17,7 @@ HTTP / SSE
 
 它不会修改或依赖同级的 `enterprise-im-ai` 与 `agent-code-change-platform`。后续可把 IM 仓库作为本地代码检索和测试目标，但两者始终保持独立。
 
-V1.2 已实现 `GET /health`、普通 JSON Chat、显式 LangGraph StateGraph、唯一的 `read_file` Tool、workspace 路径隔离和 `CODEPILOT_DEBUG` 教学日志。V1 不包含 RAG、SSE、Patch、测试执行、Branch 或 DeerFlow Runtime。
+V1.2 已实现 `GET /health`、普通 JSON Chat、显式 LangGraph StateGraph、唯一的 `read_file` Tool、workspace 路径隔离和 `CODEPILOT_DEBUG` 教学日志。每个聊天请求都会显示独立 `request_id`、图的节点跳转、LLM 调用次数、消息类型、工具参数摘要与总耗时；不会输出 API Key、完整 Prompt 或完整文件内容。V1 不包含 RAG、SSE、Patch、测试执行、Branch 或 DeerFlow Runtime。
 
 ## Run V1
 

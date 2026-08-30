@@ -24,8 +24,9 @@ class UnavailableModel:
         raise APIConnectionError(message="provider unavailable", request=Request("POST", "https://example.test"))
 
 
-def test_post_chat_returns_final_answer(tmp_path, monkeypatch) -> None:
+def test_post_chat_returns_final_answer(tmp_path, monkeypatch, capsys) -> None:
     monkeypatch.setenv("CODEPILOT_WORKSPACE_ROOT", str(tmp_path))
+    monkeypatch.setenv("CODEPILOT_DEBUG", "true")
     app.dependency_overrides[get_chat_model] = lambda: FinalAnswerModel()
     try:
         response = TestClient(app).post("/api/chat", json={"message": "hello"})
@@ -34,6 +35,9 @@ def test_post_chat_returns_final_answer(tmp_path, monkeypatch) -> None:
 
     assert response.status_code == 200
     assert response.json() == {"answer": "Hello from the minimal agent."}
+    logs = capsys.readouterr().out
+    assert "Request finished" in logs
+    assert "model_calls=1" in logs
 
 
 def test_health_reports_service_ready() -> None:

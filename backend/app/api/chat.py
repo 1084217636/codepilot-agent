@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 
 from app.agent.graph import build_agent_graph
 from app.agent.model import build_chat_model
-from app.debug import debug_log
+from app.debug import begin_trace, debug_log, trace_summary
 from app.workspace.manager import get_workspace_root
 
 router = APIRouter(prefix="/api", tags=["chat"])
@@ -38,12 +38,13 @@ def get_chat_model() -> Any:
 def chat(request: ChatRequest, model: Any = Depends(get_chat_model)) -> ChatResponse:
     """Invoke the compiled graph and return only its final AIMessage as JSON."""
 
+    begin_trace()
     try:
-        debug_log(1, "HTTP request received", endpoint="POST /api/chat")
+        debug_log(1, "HTTP request received", endpoint="POST /api/chat", user_message_chars=len(request.message))
         human = HumanMessage(content=request.message)
-        debug_log(2, "Create HumanMessage", message_type="HumanMessage")
+        debug_log(2, "Create initial AgentState", message_type="HumanMessage", message_count=1)
         graph = build_agent_graph(model, get_workspace_root())
-        debug_log(3, "Enter LangGraph")
+        debug_log(5, "Invoke compiled graph")
         result = graph.invoke({"messages": [human]})
     except APIError as exc:
         raise HTTPException(
@@ -51,9 +52,7 @@ def chat(request: ChatRequest, model: Any = Depends(get_chat_model)) -> ChatResp
             detail="Model provider request failed. Check MODEL_API_KEY, MODEL_BASE_URL, and MODEL_NAME.",
         ) from exc
     final = result["messages"][-1]
-    if any(message.type == "tool" for message in result["messages"]):
-        debug_log(14, "LangGraph finished")
-        debug_log(15, "Return HTTP response")
-    else:
-        debug_log(8, "LangGraph finished -> return HTTP response")
+    message_types = ", ".join(type(message).__name__ for message in result["messages"])
+    debug_log(16, "LangGraph finished", final_message_types=message_types)
+    debug_log(17, "Request finished", **trace_summary())
     return ChatResponse(answer=str(final.content))
