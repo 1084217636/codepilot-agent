@@ -1,5 +1,16 @@
 # Changelog
 
+## V3：Coding Agent 最小修改闭环，当前版本
+
+新增：
+
+- workspace 限制下的 lexical `search_code` 和固定 pytest `run_tests` Tool。
+- 不直接写盘的 `propose_patch` Tool，生成 `change_id` 和 unified Diff。
+- 人工 `POST /api/changes/{change_id}/approve` 批准接口，以及批准前的 stale 文件检查。
+- V3 演示 Bug、真实 DeepSeek 提案验证与 13 项自动测试。
+
+边界：检索不是 RAG；提案是进程内内存数据；不含数据库、前端、Branch 或任意 Shell。
+
 ## V2：SSE Agent 过程事件流，当前版本
 
 新增：

@@ -31,14 +31,16 @@ def make_agent_node(bound_model: Any):
         )
         response = bound_model.invoke([SystemMessage(content=SYSTEM_PROMPT), *state["messages"]])
         if getattr(response, "tool_calls", None):
-            tool_call = response.tool_calls[0]
+            requested_tools = [
+                {"name": tool_call["name"], "args": tool_call["args"]} for tool_call in response.tool_calls
+            ]
             debug_log(
                 8,
-                "LLM returned tool_call",
+                "LLM returned tool_call request(s)",
                 model_call=model_call,
                 message_type="AIMessage",
-                tool=tool_call["name"],
-                args=tool_call["args"],
+                tool_call_count=len(requested_tools),
+                tools=requested_tools,
             )
         elif returning_from_tool:
             debug_log(14, "LLM returned final answer", model_call=model_call, message_type="AIMessage", has_tool_calls=False)

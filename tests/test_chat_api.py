@@ -6,6 +6,7 @@ from httpx import Request
 from app.api.chat import get_chat_model
 from app.agent.model import build_chat_model
 from app.main import app
+from app.workspace.changes import pending_change_store
 
 
 class FinalAnswerModel:
@@ -120,3 +121,20 @@ def test_post_chat_stream_emits_agent_progress_and_final_answer(tmp_path, monkey
     logs = capsys.readouterr().out
     assert "SSE request finished" in logs
     assert "model_calls=2" in logs
+
+
+def test_approve_change_applies_only_a_pending_reviewed_proposal(tmp_path) -> None:
+    target = tmp_path / "sample.py"
+    target.write_text("answer = 41\n", encoding="utf-8")
+    change = pending_change_store.add(
+        source=target,
+        original_content="answer = 41\n",
+        proposed_content="answer = 42\n",
+        diff="-answer = 41\n+answer = 42\n",
+    )
+
+    response = TestClient(app).post(f"/api/changes/{change.change_id}/approve")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "applied"
+    assert target.read_text(encoding="utf-8") == "answer = 42\n"

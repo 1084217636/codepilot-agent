@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Any, Iterator
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -40,6 +41,22 @@ def sse_event(event: str, data: dict[str, Any]) -> str:
     """Encode one Server-Sent Event without exposing complete prompts or secrets."""
 
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+
+def tool_result_summary(name: str | None, content: str) -> dict[str, Any]:
+    """Expose safe V3 client facts, never full file or test output in SSE."""
+
+    summary: dict[str, Any] = {"name": name or "unknown", "chars": len(content)}
+    if name == "propose_patch":
+        change_id = re.search(r"^change_id=([a-z0-9]+)$", content, flags=re.MULTILINE)
+        summary["status"] = "pending_approval"
+        if change_id:
+            summary["change_id"] = change_id.group(1)
+    elif name == "run_tests":
+        exit_code = re.search(r"^exit_code=([^\n]+)$", content, flags=re.MULTILINE)
+        if exit_code:
+            summary["exit_code"] = exit_code.group(1)
+    return summary
 
 
 @router.post("/chat", response_model=ChatResponse)
@@ -103,7 +120,7 @@ def stream_chat_events(request: ChatRequest, model: Any, trace: RequestTrace) ->
                     elif message.type == "tool":
                         yield sse_event(
                             "tool_result",
-                            {"name": message.name or "unknown", "chars": len(str(message.content))},
+                            tool_result_summary(message.name, str(message.content)),
                         )
                     elif message.type == "ai":
                         final_answer = str(message.content)

@@ -44,7 +44,7 @@ def test_agent_graph_runs_human_tool_ai_message_sequence(tmp_path: Path, monkeyp
 
     result = graph.invoke({"messages": [HumanMessage(content="Read answer.txt and tell me the value.")]})
 
-    assert model.bound_tools
+    assert {tool.name for tool in model.bound_tools} == {"read_file", "search_code", "propose_patch", "run_tests"}
     assert [type(message) for message in result["messages"]] == [HumanMessage, AIMessage, ToolMessage, AIMessage]
     assert result["messages"][1].tool_calls[0]["name"] == "read_file"
     assert result["messages"][2].content == "42"
@@ -53,7 +53,8 @@ def test_agent_graph_runs_human_tool_ai_message_sequence(tmp_path: Path, monkeyp
     assert "request_id='test-tool-loop'" in logs
     assert "model_call=1" in logs
     assert "model_call=2" in logs
-    assert "LLM returned tool_call" in logs
+    assert "LLM returned tool_call request(s)" in logs
+    assert "tool_call_count=1" in logs
     assert "Execute project Python tool: read_file" in logs
     assert "ToolNode yielded ToolMessage" in logs
     assert "LLM returned final answer" in logs

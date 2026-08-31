@@ -19,6 +19,11 @@ not add token streaming, databases, RAG, patch tools, test tools, Branch, or a
 frontend. Keep stream events derived from real completed graph updates and test
 their ordering.
 
+V3 adds lexical `search_code`, non-writing `propose_patch`, and fixed-command
+`run_tests`. Patch proposals stay in memory and require a separate human approval
+endpoint. Do not replace this boundary with model-provided approval text, arbitrary
+shell execution, RAG, a database, or a frontend.
+
 `CODEPILOT_DEBUG` is a teaching feature. Each request trace must record a
 request ID, StateGraph progression, message types, LLM call count, tool summary
 and duration without emitting API keys, authentication headers, complete prompts,
