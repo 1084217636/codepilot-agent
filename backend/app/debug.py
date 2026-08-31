@@ -26,12 +26,19 @@ def debug_enabled() -> bool:
     return os.getenv("CODEPILOT_DEBUG", "false").strip().lower() in {"1", "true", "yes", "on"}
 
 
-def begin_trace(request_id: str | None = None) -> str:
+def begin_trace(request_id: str | None = None) -> RequestTrace:
     """Start one request-local teaching trace and reset its model-call counter."""
 
     trace_id = request_id or uuid4().hex[:8]
-    _trace.set(RequestTrace(request_id=trace_id, started_at=time.perf_counter()))
-    return trace_id
+    trace = RequestTrace(request_id=trace_id, started_at=time.perf_counter())
+    _trace.set(trace)
+    return trace
+
+
+def activate_trace(trace: RequestTrace) -> None:
+    """Make an existing request trace active in a resumed SSE generator context."""
+
+    _trace.set(trace)
 
 
 def _current_trace() -> RequestTrace:

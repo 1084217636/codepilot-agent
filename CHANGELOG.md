@@ -1,5 +1,15 @@
 # Changelog
 
+## V2：SSE Agent 过程事件流，当前版本
+
+新增：
+
+- `POST /api/chat/stream`，返回标准 `text/event-stream`。
+- `status`、`tool_call`、`tool_result`、`answer`、`done` 事件。
+- 流式请求内的 request Trace 传播和对 `model_calls` 的真实统计。
+
+边界：本版发送节点完成事件和最终答案，不实现逐 Token Streaming，不增加数据库、RAG、Patch、测试执行或 Branch。
+
 ## V1.2：Tool Calling Agent，当前版本
 
 新增：

@@ -1,9 +1,9 @@
-# CodePilot V1.2：亲手启动与观察手册
+# CodePilot V2：亲手启动与观察手册
 
 本轮只需要两个终端。
 
 ```text
-终端 1：启动 FastAPI，观察 [CodePilot][01] 到 [15] 日志
+终端 1：启动 FastAPI，观察 [CodePilot][01] 到 [17] 日志
 终端 2：用 curl 发 HTTP 请求
 ```
 
@@ -136,7 +136,7 @@ PowerShell：
 Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8000/api/chat" -ContentType "application/json" -Body '{"message":"你好，请用一句话介绍你自己。"}'
 ```
 
-正常看到什么：终端 2 收到 `{ "answer": "..." }`。终端 1 依次出现 `[01]` 到 `[08]`，其中 `[03] Enter LangGraph` 表示进入图，`[05] Calling LLM` 才是真正发起模型调用，`[07] No tool call -> finish` 表示这次不需要读文件。
+正常看到什么：终端 2 收到 `{ "answer": "..." }`。终端 1 会出现同一个 `request_id` 的 `[01]` 到 `[17]`；其中 `[07] Call LLM | model_call=1` 才是真正发起模型调用，`[15] No tool call -> route agent -> END` 表示这次不需要读文件。
 
 实际做什么：HumanMessage 进入 `StateGraph`，agent Node 调模型，模型直接给最终 AIMessage。
 
@@ -160,27 +160,42 @@ curl -X POST http://127.0.0.1:8000/api/chat \
 
 注意：Tool 的路径相对于 workspace root，因此传 `demo/hello.py`，不是 `workspace/demo/hello.py`。
 
-正常看到什么：终端 1 出现 `[01]` 到 `[15]`。关键观察点：
+正常看到什么：终端 1 出现 `[01]` 到 `[17]`。关键观察点：
 
 ```text
-[05] Calling LLM
-[06] LLM returned tool_call | tool='read_file'
-[07] Enter ToolNode
-[08] Execute read_file
-[09] read_file success
-[10] ToolNode created ToolMessage
-[11] Return to agent_node
-[12] Calling LLM again
-[13] LLM returned final answer
-[14] LangGraph finished
-[15] Return HTTP response
+[07] Call LLM | model_call=1
+[08] LLM returned tool_call | tool='read_file'
+[09] Route agent -> ToolNode
+[10] Execute project Python tool: read_file
+[11] read_file success
+[12] ToolNode yielded ToolMessage; return to agent_node
+[13] Call LLM | model_call=2
+[14] LLM returned final answer
+[15] No tool call -> route agent -> END
+[17] Request finished | model_calls=2
 ```
 
 第一轮 LLM 不知道文件内容，只能请求 Tool；Python `read_file` 读取文件；ToolNode 把内容变成 ToolMessage；第二轮 LLM 看见 ToolMessage 后才组织自然语言答案。
 
 知识点：Function Calling、ToolNode、ToolMessage、Agent Loop。
 
-## Step 9：测试 Workspace 边界
+## Step 9：观察 V2 SSE 过程事件流
+
+命令：
+
+```bash
+curl -N -X POST http://127.0.0.1:8000/api/chat/stream \
+  -H "Content-Type: application/json" \
+  -d '{"message":"请读取 demo/hello.py，并用一句话说明它的功能。"}'
+```
+
+正常看到什么：依次收到 `status`、`tool_call`、`tool_result`、`answer`、`done` 事件。`done` 中的 `model_calls` 是本次真实 DeepSeek 调用次数。
+
+实际做什么：SSE 保持 HTTP 响应打开。`graph.stream(stream_mode="updates")` 在每个 LangGraph Node 完成后给出 State 更新，服务端将其映射为事件。当前只流式发送过程事件和最终答案，不是逐 Token 输出。
+
+知识点：SSE、HTTP 长响应、事件顺序、可观测性。详见 [04-sse-streaming.md](04-sse-streaming.md)。
+
+## Step 10：测试 Workspace 边界
 
 通过 API 让模型传 `../` 不稳定，因为模型未必愿意按要求生成非法调用。此处直接运行 Tool 单测，最能稳定观察拒绝行为：
 
@@ -194,7 +209,7 @@ uv run pytest -v tests/test_read_file.py
 
 知识点：路径穿越、最小权限。当前只是文件路径边界，不是容器级 Sandbox。
 
-## Step 10：最后运行自动测试
+## Step 11：最后运行自动测试
 
 命令：
 
@@ -202,7 +217,7 @@ uv run pytest -v tests/test_read_file.py
 uv run pytest -v
 ```
 
-正常看到什么：5 项测试通过。
+正常看到什么：8 项测试通过。
 
 实际做什么：手工请求用于理解真实调用链；pytest 用于确认后续修改没有破坏 health、HTTP、Tool 边界和 Agent 消息序列。
 
