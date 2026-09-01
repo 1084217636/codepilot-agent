@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "description": "Source-grounded CodePilot retrieval tasks. Labels point to real files and top-level symbols.",
+  "tasks": [
+    {"id":"dev_01","split":"dev","question":"How is a workspace path prevented from escaping with ../?","expected_files":["backend/app/workspace/manager.py"],"expected_symbols":["resolve_workspace_file"]},
+    {"id":"dev_02","split":"dev","question":"Where is the read_file tool defined?","expected_files":["backend/app/tools/read_file.py"],"expected_symbols":["build_read_file_tool"]},
+    {"id":"dev_03","split":"dev","question":"Which function decides whether the agent goes to ToolNode or END?","expected_files":["backend/app/agent/nodes.py"],"expected_symbols":["route_after_agent"]},
+    {"id":"dev_04","split":"dev","question":"How are pending patch proposals approved safely?","expected_files":["backend/app/workspace/changes.py"],"expected_symbols":["approve"]},
+    {"id":"dev_05","split":"dev","question":"Where does the agent run its fixed pytest command?","expected_files":["backend/app/tools/run_tests.py"],"expected_symbols":["build_run_tests_tool"]},
+    {"id":"dev_06","split":"dev","question":"How does CodePilot construct retrieval context under a token budget?","expected_files":["backend/app/retrieval/retriever.py"],"expected_symbols":["build_context"]},
+    {"id":"dev_07","split":"dev","question":"Where is the SSE chat stream endpoint implemented?","expected_files":["backend/app/api/chat.py"],"expected_symbols":["chat_stream"]},
+    {"id":"dev_08","split":"dev","question":"Which code records the number of LLM calls for one request?","expected_files":["backend/app/debug.py"],"expected_symbols":["next_model_call"]},
+    {"id":"holdout_01","split":"holdout","question":"How are code chunks created from Python functions and classes?","expected_files":["backend/app/retrieval/retriever.py"],"expected_symbols":["_chunks"]},
+    {"id":"holdout_02","split":"holdout","question":"Where is the human patch approval HTTP API?","expected_files":["backend/app/api/changes.py"],"expected_symbols":["approve_change"]},
+    {"id":"holdout_03","split":"holdout","question":"How does a tool result become a safe SSE summary?","expected_files":["backend/app/api/chat.py"],"expected_symbols":["tool_result_summary"]},
+    {"id":"holdout_04","split":"holdout","question":"Where is the calculator add bug located?","expected_files":["workspace/demo/calculator.py"],"expected_symbols":["add"]}
+  ]
+}

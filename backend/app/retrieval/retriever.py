@@ -39,7 +39,7 @@ def _tokens(text: str) -> set[str]:
 def _chunks(root: Path) -> list[CodeChunk]:
     chunks: list[CodeChunk] = []
     for source in sorted(root.rglob("*.py")):
-        if not source.is_file():
+        if not source.is_file() or any(part in {".git", ".venv", "__pycache__", ".pytest_cache"} for part in source.parts):
             continue
         text = source.read_text(encoding="utf-8", errors="replace")
         lines = text.splitlines()

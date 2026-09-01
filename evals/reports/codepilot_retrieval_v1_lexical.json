@@ -1,0 +1,346 @@
+{
+  "task_count": 12,
+  "top_k": 4,
+  "token_budget": 800,
+  "file_recall_at_k": 0.75,
+  "symbol_recall_at_k": 0.75,
+  "average_context_chars": 3199.0,
+  "tasks": [
+    {
+      "id": "dev_01",
+      "file_recall": 1.0,
+      "symbol_recall": 1.0,
+      "context_chars": 3199,
+      "retrieved": [
+        {
+          "path": "backend/app/workspace/changes.py",
+          "symbol": "PendingChangeStore",
+          "reason": "lexical=0.67; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/tools/search_code.py",
+          "symbol": "build_search_code_tool",
+          "reason": "lexical=0.56; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/workspace/manager.py",
+          "symbol": "resolve_workspace_file",
+          "reason": "lexical=0.44; symbol=0.11; semantic unavailable"
+        },
+        {
+          "path": "backend/app/retrieval/retriever.py",
+          "symbol": "HybridCodeRetriever",
+          "reason": "lexical=0.44; symbol=0.00; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "dev_02",
+      "file_recall": 1.0,
+      "symbol_recall": 1.0,
+      "context_chars": 3200,
+      "retrieved": [
+        {
+          "path": "backend/app/tools/read_file.py",
+          "symbol": "build_read_file_tool",
+          "reason": "lexical=0.57; symbol=0.43; semantic unavailable"
+        },
+        {
+          "path": "tests/test_chat_api.py",
+          "symbol": "StreamingToolModel",
+          "reason": "lexical=0.71; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "tests/test_chat_api.py",
+          "symbol": "test_post_chat_stream_emits_agent_progress_and_final_answer",
+          "reason": "lexical=0.71; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/tools/propose_patch.py",
+          "symbol": "build_propose_patch_tool",
+          "reason": "lexical=0.57; symbol=0.14; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "dev_03",
+      "file_recall": 1.0,
+      "symbol_recall": 1.0,
+      "context_chars": 3202,
+      "retrieved": [
+        {
+          "path": "backend/app/agent/graph.py",
+          "symbol": "build_agent_graph",
+          "reason": "lexical=0.45; symbol=0.09; semantic unavailable"
+        },
+        {
+          "path": "backend/app/agent/nodes.py",
+          "symbol": "route_after_agent",
+          "reason": "lexical=0.45; symbol=0.09; semantic unavailable"
+        },
+        {
+          "path": "backend/app/agent/nodes.py",
+          "symbol": "make_agent_node",
+          "reason": "lexical=0.36; symbol=0.09; semantic unavailable"
+        },
+        {
+          "path": "backend/app/agent/prompts.py",
+          "symbol": null,
+          "reason": "lexical=0.36; symbol=0.00; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "dev_04",
+      "file_recall": 0.0,
+      "symbol_recall": 0.0,
+      "context_chars": 3182,
+      "retrieved": [
+        {
+          "path": "backend/app/agent/prompts.py",
+          "symbol": null,
+          "reason": "lexical=0.43; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "tests/test_v3_workspace_tools.py",
+          "symbol": "test_proposal_requires_human_approval_before_modifying_file",
+          "reason": "lexical=0.43; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/tools/propose_patch.py",
+          "symbol": "build_propose_patch_tool",
+          "reason": "lexical=0.29; symbol=0.14; semantic unavailable"
+        },
+        {
+          "path": "backend/app/agent/graph.py",
+          "symbol": "build_agent_graph",
+          "reason": "lexical=0.29; symbol=0.00; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "dev_05",
+      "file_recall": 1.0,
+      "symbol_recall": 1.0,
+      "context_chars": 3202,
+      "retrieved": [
+        {
+          "path": "backend/app/agent/prompts.py",
+          "symbol": null,
+          "reason": "lexical=0.78; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "tests/test_v3_workspace_tools.py",
+          "symbol": "test_run_tests_uses_fixed_pytest_command_and_returns_result",
+          "reason": "lexical=0.44; symbol=0.44; semantic unavailable"
+        },
+        {
+          "path": "backend/app/tools/run_tests.py",
+          "symbol": "build_run_tests_tool",
+          "reason": "lexical=0.56; symbol=0.11; semantic unavailable"
+        },
+        {
+          "path": "backend/app/agent/graph.py",
+          "symbol": "build_agent_graph",
+          "reason": "lexical=0.33; symbol=0.11; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "dev_06",
+      "file_recall": 1.0,
+      "symbol_recall": 1.0,
+      "context_chars": 3200,
+      "retrieved": [
+        {
+          "path": "tests/test_v4_retrieval.py",
+          "symbol": "test_retrieval_falls_back_without_embedding_and_respects_context_budget",
+          "reason": "lexical=0.40; symbol=0.30; semantic unavailable"
+        },
+        {
+          "path": "backend/app/retrieval/retriever.py",
+          "symbol": "build_context",
+          "reason": "lexical=0.50; symbol=0.10; semantic unavailable"
+        },
+        {
+          "path": "backend/app/api/chat.py",
+          "symbol": "stream_chat_events",
+          "reason": "lexical=0.40; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/evals/retrieval_eval.py",
+          "symbol": "evaluate_dataset",
+          "reason": "lexical=0.40; symbol=0.00; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "dev_07",
+      "file_recall": 1.0,
+      "symbol_recall": 1.0,
+      "context_chars": 3200,
+      "retrieved": [
+        {
+          "path": "backend/app/api/chat.py",
+          "symbol": "stream_chat_events",
+          "reason": "lexical=0.62; symbol=0.25; semantic unavailable"
+        },
+        {
+          "path": "tests/test_chat_api.py",
+          "symbol": "test_post_chat_stream_emits_agent_progress_and_final_answer",
+          "reason": "lexical=0.62; symbol=0.25; semantic unavailable"
+        },
+        {
+          "path": "backend/app/api/chat.py",
+          "symbol": "chat_stream",
+          "reason": "lexical=0.50; symbol=0.25; semantic unavailable"
+        },
+        {
+          "path": "tests/test_chat_api.py",
+          "symbol": "StreamingToolModel",
+          "reason": "lexical=0.62; symbol=0.00; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "dev_08",
+      "file_recall": 1.0,
+      "symbol_recall": 1.0,
+      "context_chars": 3203,
+      "retrieved": [
+        {
+          "path": "backend/app/agent/nodes.py",
+          "symbol": "make_agent_node",
+          "reason": "lexical=0.55; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/debug.py",
+          "symbol": "next_model_call",
+          "reason": "lexical=0.55; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "tests/test_agent_graph.py",
+          "symbol": "test_agent_graph_runs_human_tool_ai_message_sequence",
+          "reason": "lexical=0.55; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/agent/graph.py",
+          "symbol": "build_agent_graph",
+          "reason": "lexical=0.36; symbol=0.00; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "holdout_01",
+      "file_recall": 0.0,
+      "symbol_recall": 0.0,
+      "context_chars": 3197,
+      "retrieved": [
+        {
+          "path": "backend/app/tools/search_code.py",
+          "symbol": "build_search_code_tool",
+          "reason": "lexical=0.30; symbol=0.10; semantic unavailable"
+        },
+        {
+          "path": "tests/test_v3_workspace_tools.py",
+          "symbol": "test_search_code_returns_workspace_relative_path_line_and_reason",
+          "reason": "lexical=0.20; symbol=0.20; semantic unavailable"
+        },
+        {
+          "path": "backend/app/api/chat.py",
+          "symbol": "get_chat_model",
+          "reason": "lexical=0.30; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/api/chat.py",
+          "symbol": "chat",
+          "reason": "lexical=0.30; symbol=0.00; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "holdout_02",
+      "file_recall": 0.0,
+      "symbol_recall": 0.0,
+      "context_chars": 3204,
+      "retrieved": [
+        {
+          "path": "backend/app/agent/prompts.py",
+          "symbol": null,
+          "reason": "lexical=0.75; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "tests/test_v3_workspace_tools.py",
+          "symbol": "test_proposal_requires_human_approval_before_modifying_file",
+          "reason": "lexical=0.38; symbol=0.25; semantic unavailable"
+        },
+        {
+          "path": "backend/app/api/chat.py",
+          "symbol": "chat",
+          "reason": "lexical=0.50; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/tools/propose_patch.py",
+          "symbol": "build_propose_patch_tool",
+          "reason": "lexical=0.38; symbol=0.12; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "holdout_03",
+      "file_recall": 1.0,
+      "symbol_recall": 1.0,
+      "context_chars": 3200,
+      "retrieved": [
+        {
+          "path": "backend/app/api/chat.py",
+          "symbol": "tool_result_summary",
+          "reason": "lexical=0.67; symbol=0.33; semantic unavailable"
+        },
+        {
+          "path": "backend/app/api/chat.py",
+          "symbol": "stream_chat_events",
+          "reason": "lexical=0.56; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/tools/search_code.py",
+          "symbol": "build_search_code_tool",
+          "reason": "lexical=0.33; symbol=0.11; semantic unavailable"
+        },
+        {
+          "path": "tests/test_chat_api.py",
+          "symbol": "test_post_chat_stream_emits_agent_progress_and_final_answer",
+          "reason": "lexical=0.33; symbol=0.00; semantic unavailable"
+        }
+      ]
+    },
+    {
+      "id": "holdout_04",
+      "file_recall": 1.0,
+      "symbol_recall": 1.0,
+      "context_chars": 3199,
+      "retrieved": [
+        {
+          "path": "workspace/demo/calculator.py",
+          "symbol": "add",
+          "reason": "lexical=0.43; symbol=0.14; semantic unavailable"
+        },
+        {
+          "path": "backend/app/storage/database.py",
+          "symbol": "Database",
+          "reason": "lexical=0.43; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "backend/app/workspace/changes.py",
+          "symbol": "PendingChangeStore",
+          "reason": "lexical=0.43; symbol=0.00; semantic unavailable"
+        },
+        {
+          "path": "tests/test_storage.py",
+          "symbol": "test_database_persists_thread_messages_runs_and_events",
+          "reason": "lexical=0.43; symbol=0.00; semantic unavailable"
+        }
+      ]
+    }
+  ]
+}
