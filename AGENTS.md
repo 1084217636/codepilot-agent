@@ -24,6 +24,11 @@ V3 adds lexical `search_code`, non-writing `propose_patch`, and fixed-command
 endpoint. Do not replace this boundary with model-provided approval text, arbitrary
 shell execution, RAG, a database, or a frontend.
 
+V4 adds only lightweight hybrid retrieval before the Agent: Python symbol chunks,
+lexical and symbol scoring, optional configured embeddings, and a bounded context
+builder. Preserve the no-embedding fallback; do not add a vector database,
+GraphRAG, persistence, Branch, or frontend in this version.
+
 `CODEPILOT_DEBUG` is a teaching feature. Each request trace must record a
 request ID, StateGraph progression, message types, LLM call count, tool summary
 and duration without emitting API keys, authentication headers, complete prompts,

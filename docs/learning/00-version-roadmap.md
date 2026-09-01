@@ -1,6 +1,6 @@
 # CodePilot 版本路线：每次只多学一层
 
-当前项目已完成 V3。下面的 V0 到 V1.1 是为了让你理解“当前结构比上一版多了什么”，不是说仓库保留了多套并行代码。
+当前项目已完成 V4。下面的 V0 到 V1.1 是为了让你理解“当前结构比上一版多了什么”，不是说仓库保留了多套并行代码。
 
 ## V0：项目骨架
 
@@ -64,13 +64,20 @@ Requirement → Search / Read → Propose Patch → Human Approval → Run Tests
 
 新增：`search_code`、`propose_patch`、`run_tests`，以及 `POST /api/changes/{change_id}/approve`。Patch 先在内存中生成并经人工批准；测试工具只运行固定 pytest 命令。
 
+## V4：Hybrid Code RAG，当前版本
+
+```text
+Task → Chunk → lexical / symbol / semantic → Top-K → Token Budget → Agent
+```
+
+实现只使用进程内索引和可选 OpenAI-compatible Embedding Provider；未配置时自动降级为 lexical + symbol。
+
 ## 后续版本，当前不实现
 
 | 版本 | 只计划学习什么 |
 | --- | --- |
-| V4 | Code RAG：Chunk、Embedding、Top-K、Token Budget |
 | V5 | 持久化 Thread/Message、最小 Main + Branch 双栏 UI、Anchor 与独立 Branch Context |
 
 数据库不在 V2-V4 过早加入。它只在 V5 的多请求会话和 Branch 必须保存时引入；学习版先使用 SQLite，理解表、外键和查询后，再讨论 PostgreSQL。Anchor Branch 也放在 V5：它需要后端保存 `main_message_id + anchor`，也需要前端让用户选中文本、打开/关闭 Branch，因此会以最小双栏页面和后端语义一起实现。
 
-当前不要把 V4 以上的能力写进简历或当作已实现功能。
+当前不要把 V5 以上的能力写进简历或当作已实现功能。

@@ -1,5 +1,11 @@
 # Changelog
 
+## V4：Hybrid Code RAG，当前版本
+
+- 函数/类级 Python Chunk、lexical + symbol + optional semantic 融合。
+- Top-K、近似 Token Budget Context Builder 与 Embedding fallback。
+- SSE `retrieval` 事件；不增加向量数据库或持久化。
+
 ## V3：Coding Agent 最小修改闭环，当前版本
 
 新增：
