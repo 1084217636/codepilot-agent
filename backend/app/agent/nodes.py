@@ -11,7 +11,7 @@ from app.agent.state import AgentState
 from app.debug import debug_log, next_model_call
 
 
-def make_agent_node(bound_model: Any):
+def make_agent_node(bound_model: Any, retrieved_context: str = ""):
     """Return the graph's agent node; it invokes the model with state messages."""
 
     def agent(state: AgentState) -> dict[str, list]:
@@ -29,7 +29,8 @@ def make_agent_node(bound_model: Any):
             state_message_count=len(state["messages"]),
             state_message_types=message_types,
         )
-        response = bound_model.invoke([SystemMessage(content=SYSTEM_PROMPT), *state["messages"]])
+        retrieval_note = "" if not retrieved_context else f"\n\nRetrieved code context:\n{retrieved_context}"
+        response = bound_model.invoke([SystemMessage(content=SYSTEM_PROMPT + retrieval_note), *state["messages"]])
         if getattr(response, "tool_calls", None):
             requested_tools = [
                 {"name": tool_call["name"], "args": tool_call["args"]} for tool_call in response.tool_calls

@@ -15,6 +15,7 @@ from starlette.responses import StreamingResponse
 from app.agent.graph import build_agent_graph
 from app.agent.model import build_chat_model
 from app.debug import RequestTrace, activate_trace, begin_trace, debug_log, trace_summary
+from app.retrieval.retriever import HybridCodeRetriever, build_context, configured_embedder
 from app.workspace.manager import get_workspace_root
 
 router = APIRouter(prefix="/api", tags=["chat"])
@@ -59,6 +60,13 @@ def tool_result_summary(name: str | None, content: str) -> dict[str, Any]:
     return summary
 
 
+def retrieve_context(workspace_root, query: str) -> tuple[str, int]:
+    """Build bounded V4 code context; unavailable embeddings fall back safely."""
+
+    results = HybridCodeRetriever(workspace_root, embedder=configured_embedder()).retrieve(query)
+    return build_context(results), len(results)
+
+
 @router.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest, model: Any = Depends(get_chat_model)) -> ChatResponse:
     """Invoke the compiled graph and return only its final AIMessage as JSON."""
@@ -66,9 +74,12 @@ def chat(request: ChatRequest, model: Any = Depends(get_chat_model)) -> ChatResp
     begin_trace()
     try:
         debug_log(1, "HTTP request received", endpoint="POST /api/chat", user_message_chars=len(request.message))
+        workspace_root = get_workspace_root()
+        context, result_count = retrieve_context(workspace_root, request.message)
+        debug_log(3, "Build V4 retrieval context", result_count=result_count, context_chars=len(context))
         human = HumanMessage(content=request.message)
         debug_log(2, "Create initial AgentState", message_type="HumanMessage", message_count=1)
-        graph = build_agent_graph(model, get_workspace_root())
+        graph = build_agent_graph(model, workspace_root, context)
         debug_log(5, "Invoke compiled graph")
         result = graph.invoke({"messages": [human]})
     except APIError as exc:
@@ -97,9 +108,13 @@ def stream_chat_events(request: ChatRequest, model: Any, trace: RequestTrace) ->
         yield sse_event("status", {"stage": "started", "request_id": trace_summary()["request_id"]})
 
         activate_trace(trace)
+        workspace_root = get_workspace_root()
+        context, result_count = retrieve_context(workspace_root, request.message)
+        debug_log(3, "Build V4 retrieval context", result_count=result_count, context_chars=len(context))
+        yield sse_event("retrieval", {"result_count": result_count, "context_chars": len(context)})
         human = HumanMessage(content=request.message)
         debug_log(2, "Create initial AgentState", message_type="HumanMessage", message_count=1)
-        graph = build_agent_graph(model, get_workspace_root())
+        graph = build_agent_graph(model, workspace_root, context)
         yield sse_event("status", {"stage": "graph_compiled", "request_id": trace_summary()["request_id"]})
 
         activate_trace(trace)
